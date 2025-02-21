@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a post</title>
+</head>
+<body style="text-align: center;">
+    <h1>Make a Post</h1>
+    <h4 id="postCreatorText"></h4>
+    <input type="text" placeholder="Post Title" id="postTitle" style="display: inline-block; margin-right: 10px;"> <p>(Each post title must be original for it to register)</p><br>
+    <textarea placeholder="Post Body" id="postBody"></textarea><br><br>
+    <h4 id="valtitle">Enter RGB values for title colour</h4>
+
+    <input type="text" id="rinput" placeholder="Red Value" style="width: 5.5%;">
+    <input type="text" id="ginput" placeholder="Green Value" style="width: 6.7%;">
+    <input type="text" id="binput" placeholder="blue Value" style="width: 5.7%;">
+    <button id="previewColour">Preview Colour</button>
+    <p> (Colors only work if all RGB fields are filled out)</p>
+    <br>
+    <br>
+    <button id="submitPost">Submit Post</button>
+
+    
+</body>
+
+    <script>
+        
+        let tcr = parseInt(document.getElementById(`rinput`).value);
+        let tcg = parseInt(document.getElementById(`ginput`).value);        
+        let tcb = parseInt(document.getElementById(`binput`).value);
+
+
+
+
+function createPost(title, base, score, creatorname, tcr, tcg, tcb) {
+    // Use default values if tcr, tcg, or tcb are NaN
+
+    const postData = {
+        title: title,
+        base: base,
+        score: score || 0,  
+        creatorname: creatorname,
+        tcr: tcr,  // Now these should be valid numbers
+        tcg: tcg,  
+        tcb: tcb
+    };
+
+    fetch('http://localhost:3000/posts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Post created successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error creating post:', error);
+    });
+}
+
+
+
+
+
+
+
+        let username = localStorage.getItem("username"); 
+        let useremail = localStorage.getItem("useremail")
+        let postCreator = username + ` - ` + useremail;
+        document.getElementById(`postCreatorText`).textContent = `Post Creator: `+postCreator;
+
+        document.getElementById(`submitPost`).onclick = function(){
+            tcr = parseInt(document.getElementById(`rinput`).value);
+            tcg = parseInt(document.getElementById(`ginput`).value);        
+            tcb = parseInt(document.getElementById(`binput`).value);
+
+            postTitle = document.getElementById(`postTitle`).value;
+            postBody = document.getElementById(`postBody`).value;
+
+            localStorage.setItem("postTitle", postTitle);
+            localStorage.setItem("postBody", postBody);
+            localStorage.setItem("postCreator", postCreator);
+            localStorage.setItem("tcr", tcr);
+            localStorage.setItem("tcg", tcg);
+            localStorage.setItem("tcb", tcb);
+            console.log('RGB values:', tcr, tcg, tcb); // Debugging line
+            console.log('Stored tcr:', localStorage.getItem('tcr'));
+            console.log('Stored tcg:', localStorage.getItem('tcg'));
+            console.log('Stored tcb:', localStorage.getItem('tcb'));
+
+
+            createPost(postTitle, postBody, 5, postCreator, tcr, tcg, tcb);
+            window.location = "posts.html";
+        }
+
+
+
+        document.getElementById(`previewColour`).onclick = function(){
+            let tcr = document.getElementById(`rinput`).value
+            let tcg = document.getElementById(`ginput`).value        
+            let tcb = document.getElementById(`binput`).value
+            document.getElementById(`valtitle`).style.color = `rgb(${tcr}, ${tcg}, ${tcb})`
+        }
+
+
+
+
+        localStorage.setItem("postCreator", postCreator);
+    </script>
+</html>

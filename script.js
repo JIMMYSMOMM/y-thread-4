@@ -70,7 +70,7 @@ if (window.location.pathname == "/list.html"){
     }
 
     function createUser(name, email) {
-        fetch('/api/users', {  // Update with your correct serverless function URL
+        fetch('/api/users', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -79,20 +79,26 @@ if (window.location.pathname == "/list.html"){
         })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Failed to create user');
+            throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          return response.json();
+          return response.text();  // Use text() to get the raw response
         })
         .then(data => {
-          console.log("User created:", data);
-          alert("User created successfully!");
-          // Optionally reload the user list or navigate
+          console.log("Raw Response:", data); // Log the raw response to see what is being returned
+          try {
+            const jsonData = JSON.parse(data); // Try parsing the response as JSON
+            console.log("Parsed Data:", jsonData);
+          } catch (e) {
+            console.error("Error parsing JSON:", e);
+            throw new Error("Invalid JSON response");
+          }
         })
         .catch(error => {
           console.error("Error creating user:", error);
           alert("Error creating user.");
         });
       }
+      
       
     
 

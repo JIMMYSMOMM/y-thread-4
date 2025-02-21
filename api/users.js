@@ -1,10 +1,8 @@
-import db from '../../lib/db';  // Import the DB connection
-
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    // Get users
     db.query('SELECT * FROM users', (err, result) => {
       if (err) {
+        console.error('Database query error:', err); // Log the error
         return res.status(500).json({ error: err.message });
       }
       res.status(200).json(result);
@@ -19,6 +17,7 @@ export default async function handler(req, res) {
     const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
     db.query(sql, [name, email], (err, result) => {
       if (err) {
+        console.error('Error inserting user:', err); // Log the error
         return res.status(500).json({ error: err.message });
       }
       res.status(201).json({
